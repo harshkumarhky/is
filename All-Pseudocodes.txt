@@ -1,0 +1,201 @@
+1. caesar cifer:..........
+
+function caesarCipherEncrypt(plainText, shift):
+    cipherText = ""
+    for each character in plainText:
+        if character is a letter:
+            if character is uppercase:
+                encryptedChar = (character + shift - 'A') mod 26 + 'A'
+            else:
+                encryptedChar = (character + shift - 'a') mod 26 + 'a'
+        else:
+            encryptedChar = character
+        cipherText += encryptedChar
+    return cipherText
+
+====================================================================
+
+function caesarCipherDecrypt(cipherText, shift):
+    plainText = ""
+    for each character in cipherText:
+        if character is a letter:
+            if character is uppercase:
+                decryptedChar = (character - shift - 'A' + 26) mod 26 + 'A'
+            else:
+                decryptedChar = (character - shift - 'a' + 26) mod 26 + 'a'
+        else:
+            decryptedChar = character
+        plainText += decryptedChar
+    return plainText
+
+
+
+2.Rail Fence Cipher:........
+
+function railFenceEncrypt(plainText, rails):
+    fence = createEmptyFence(rails)
+    direction = "down"
+    row = 0
+    
+    for each character in plainText:
+        fence[row] += character
+        
+        if direction is "down":
+            row += 1
+        else:
+            row -= 1
+        
+        if row == rails - 1:
+            direction = "up"
+        elseif row == 0:
+            direction = "down"
+    
+    cipherText = concatenateRows(fence)
+    return cipherText
+
+=======================================================================================
+
+function railFenceDecrypt(cipherText, rails):
+    fence = createFence(length(cipherText), rails)
+    index = 0
+    for rail in range(rails):
+        for position in range(length(cipherText)):
+            if fence[rail][position] != '-':
+                fence[rail][position] = cipherText[index]
+                index += 1
+    plainText = ""
+    direction = 1
+    currentRow = 0
+    for position in range(length(cipherText)):
+        plainText += fence[currentRow][position]
+        currentRow += direction
+        if currentRow == 0 or currentRow == rails - 1:
+            direction = -direction
+    return plainText
+
+
+
+3.Playfair Cipher:............
+
+function playfairEncrypt(plainText, key):
+    prepareKey(key)
+    preparePlainText(plainText)
+    cipherText = ""
+
+    for each pair of plaintext characters:
+        find position of each character in the key square
+        if both characters are in the same row:
+            take characters to the right, wrapping around if needed
+        else if both characters are in the same column:
+            take characters below, wrapping around if needed
+        else:
+            form a rectangle and take the characters in the opposite corners
+
+        add resulting characters to the ciphertext
+
+    return cipherText
+
+===================================================================
+
+function playfairDecrypt(cipherText, key):
+    keyMatrix = generateKeyMatrix(key)
+    pairs = splitCipherTextIntoPairs(cipherText)
+    plainText = ""
+
+    for each pair in pairs:
+        decryptedPair = decryptPair(pair, keyMatrix)
+        plainText += decryptedPair
+
+    return plainText
+
+
+4.Vigenere Cipher:.........
+
+function vigenereCipherEncrypt(plainText, keyword):
+    cipherText = ""
+    keywordIndex = 0
+    for each character in plainText:
+        if character is a letter:
+            shift = (position of keyword[keywordIndex] in the alphabet) mod 26
+            if character is uppercase:
+                encryptedChar = (character + shift - 'A') mod 26 + 'A'
+            else:
+                encryptedChar = (character + shift - 'a') mod 26 + 'a'
+            keywordIndex = (keywordIndex + 1) mod length(keyword)
+        else:
+            encryptedChar = character
+        cipherText += encryptedChar
+    return cipherText
+
+============================================================
+
+function vigenereCipherDecrypt(cipherText, keyword):
+    plainText = ""
+    keywordLength = length(keyword)
+    for i from 0 to length(cipherText) - 1:
+        char = cipherText[i]
+        if char is a letter:
+            shift = keyword[i mod keywordLength]
+            if char is uppercase:
+                decryptedChar = (char - shift + 26) mod 26 + 'A'
+            else:
+                decryptedChar = (char - shift + 26) mod 26 + 'a'
+        else:
+            decryptedChar = char
+        plainText += decryptedChar
+    return plainText
+
+5.Hill Cipher:...............
+
+function hillCipherEncrypt(plainText, keyMatrix):
+    Convert plainText to numerical values
+    Pad the plainText if necessary to make its length a multiple of the keyMatrix size
+    Divide the plainText into blocks of size equal to the keyMatrix size
+    for each block:
+        Multiply the block by the keyMatrix
+        Convert the resulting numerical values back to characters
+    Combine the encrypted blocks into a single string
+    return the encrypted text
+
+=========================================================================
+
+function hillCipherDecrypt(cipherText, keyMatrix):
+    blockSize = size of keyMatrix
+    plainText = ""
+    for each block in cipherText:
+        cipherBlock = convert block to matrix
+        inverseKeyMatrix = calculate inverse of keyMatrix
+        plainBlock = multiply inverseKeyMatrix by cipherBlock
+        plainText += convert plainBlock to characters
+    return plainText
+
+
+6.Diffie-Hellman Key Exchange:.............
+
+// Alice's side
+private keyA = generateRandomNumber()
+publicKeyA = calculatePublicKey(privateKeyA)
+
+// Bob's side
+private keyB = generateRandomNumber()
+publicKeyB = calculatePublicKey(privateKeyB)
+
+// Shared Secret Calculation
+sharedSecretA = calculateSharedSecret(publicKeyB, privateKeyA)
+sharedSecretB = calculateSharedSecret(publicKeyA, privateKeyB)
+
+// Function to calculate public key
+function calculatePublicKey(privateKey):
+    return (base ^ privateKey) % prime
+
+// Function to calculate shared secret
+function calculateSharedSecret(publicKey, privateKey):
+    return (publicKey ^ privateKey) % prime
+
+==============================================================
+
+function diffieHellmanDecrypt(sharedSecret, receivedMessage):
+    decryptedMessage = receivedMessage XOR sharedSecret
+    return decryptedMessage
+
+XOR denotes the bitwise XOR operation, which is commonly used for encryption and decryption in Diffie-Hellman.
